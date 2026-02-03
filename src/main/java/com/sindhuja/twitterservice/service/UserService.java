@@ -18,39 +18,39 @@ public class UserService {
 
     public UserResponse addUser(CreateUserRequest request){
         UserId userId=new UserId(request.userId());
+        userRepository.verifyUserNotExists(userId);
         User user=new User(userId,
                 request.name(),
                 request.email());
-        userRepository.addUser(user);
-        String id=userId.getValue();
-        UserResponse response=new UserResponse(id,
-                user.getName(),
-                user.getEmail());
-        return response;
+        User savedUser=userRepository.addUser(user);
+        return new UserResponse(savedUser.getUserId().getUserValue(),
+                savedUser.getName(),
+                savedUser.getEmail());
     }
 
     public UserResponse getUser(String userId){
         UserId userId1=new UserId(userId);
+        userRepository.verifyUserExists(userId1);
         User user=userRepository.getUserById(userId1);
-        UserResponse response=new UserResponse(userId,user.getName(),user.getEmail());
-        return response;
+        return new UserResponse(userId,user.getName(),user.getEmail());
     }
 
     public UserResponse updateUser(CreateUserRequest request,String userId){
         UserId userId1=new UserId(userId);
+        userRepository.verifyUserExists(userId1);
         User user1=userRepository.getUserById(userId1);
         user1.setName(request.name());
         user1.setEmail(request.email());
-        userRepository.updateUser(user1,userId1);
-        UserResponse response=new UserResponse(
-                userId1.getValue(),
-                user1.getName(),
-                user1.getEmail());
-        return response;
+        User updatedUser=userRepository.updateUser(user1,userId1);
+        return new UserResponse(
+                updatedUser.getUserId().getUserValue(),
+                updatedUser.getName(),
+                updatedUser.getEmail());
     }
 
     public void deleteUserById(String userId){
         UserId userId1=new UserId(userId);
+        userRepository.verifyUserExists(userId1);
         userRepository.deleteUser(userId1);
     }
 

@@ -4,8 +4,11 @@ import com.sindhuja.twitterservice.domain.User;
 import com.sindhuja.twitterservice.domain.UserId;
 
 public interface IUserRepository {
-    public User addUser(User user);
-    public void deleteUser(UserId userId);
-    public User updateUser(User user,UserId userId);
-    public User getUserById(UserId userId);
+    User addUser(User user);
+    void deleteUser(UserId userId);
+    User updateUser(User user,UserId userId);
+    User getUserById(UserId userId);
+
+    void verifyUserNotExists(UserId userId);
+    void verifyUserExists(UserId userId);
 }

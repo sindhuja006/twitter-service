@@ -1,7 +1,10 @@
 package com.sindhuja.twitterservice.repository;
 
 import com.sindhuja.twitterservice.domain.User;
+import com.sindhuja.twitterservice.domain.UserAlreadyExistsException;
 import com.sindhuja.twitterservice.domain.UserId;
+import com.sindhuja.twitterservice.domain.UserNotExistsException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -12,8 +15,7 @@ public class UserRepositoryImpl implements IUserRepository{
     Map<UserId,User> userMap=new HashMap<>();
     @Override
     public User addUser(User user) {
-        User user1=userMap.put(user.getUserId(),user);
-        return user1;
+        return userMap.computeIfAbsent(user.getUserId(),v->user);
     }
 
     @Override
@@ -30,5 +32,18 @@ public class UserRepositoryImpl implements IUserRepository{
     public User getUserById(UserId userId) {
         User user1=userMap.get(userId);
         return user1;
+    }
+
+    @Override
+    public void verifyUserNotExists(UserId userId) {
+        if(userMap.containsKey(userId)) {
+            throw new UserAlreadyExistsException("user "+userId+" already exists", HttpStatus.CONFLICT);
+        }
+    }
+
+    public void verifyUserExists(UserId userId){
+        if(!userMap.containsKey(userId)){
+           throw new UserNotExistsException("user" + userId +"not exists",HttpStatus.CONFLICT);
+        }
     }
 }

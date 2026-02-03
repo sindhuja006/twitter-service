@@ -18,10 +18,4 @@ public class Follow {
     public void setFolloweeId(UserId followeeId) {
         this.followeeId = followeeId;
     }
-
-
-
-
-
-
 }
