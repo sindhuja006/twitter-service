@@ -4,8 +4,10 @@ import com.sindhuja.twitterservice.domain.Tweet;
 import com.sindhuja.twitterservice.domain.TweetId;
 import com.sindhuja.twitterservice.domain.UserId;
 
+import java.util.List;
+
 public interface ITweetRepository {
-    Tweet postTweet(UserId userId, Tweet tweet);
-    void deleteTweet(UserId userId);
-    Tweet getTweets(UserId userId);
+    List<Tweet> postTweet(UserId userId, Tweet tweet);
+    void deleteTweet(UserId userId,TweetId tweetId);
+    List<Tweet> getTweets(UserId userId);
 }

@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/tweets")
 public class TweetController {
@@ -21,14 +23,14 @@ public class TweetController {
      }
 
      @GetMapping("/{id}")
-     public ResponseEntity<TweetResponse> getTweetById( @PathVariable String id){
-         TweetResponse response=tweetService.getTweets(id);
-         return ResponseEntity.ok(response);
+     public ResponseEntity<List<TweetResponse>> getTweetById(@PathVariable String id){
+         List<TweetResponse> responses=tweetService.getTweets(id);
+         return ResponseEntity.ok(responses);
      }
 
-     @DeleteMapping("/{userId}")
-     public ResponseEntity<String> deleteTweet(@PathVariable String userId){
-         tweetService.deleteTweetById(userId);
+     @DeleteMapping("users/{userId}/tweet/{tweetId}")
+     public ResponseEntity<String> deleteTweet(@PathVariable String userId,@PathVariable int tweetId){
+         tweetService.deleteTweetById(userId,tweetId);
          return ResponseEntity.noContent().build();
      }
 }

@@ -7,6 +7,9 @@ import com.sindhuja.twitterservice.dto.TweetResponse;
 import com.sindhuja.twitterservice.repository.TweetRepositoryImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class TweetService {
      TweetRepositoryImpl tweetRepository;
@@ -22,15 +25,21 @@ public class TweetService {
          return new TweetResponse(userId, request.tweetId(), request.message(), request.insertTime());
      }
 
-     public TweetResponse getTweets(String userId){
+     public List<TweetResponse> getTweets(String userId){
          UserId userId1=new UserId(userId);
-         Tweet tweet=tweetRepository.getTweets(userId1);
-         int tweetId=tweet.getTweetId().getTweetValue();
-         return new TweetResponse(userId,tweetId,tweet.getMessage(),tweet.getInsertTime());
+         List<Tweet> tweetList=tweetRepository.getTweets(userId1);
+         List<TweetResponse> responses=new ArrayList<>();
+         for(Tweet tweet:tweetList){
+             int tweetId=tweet.getTweetId().getTweetValue();
+             TweetResponse response=new TweetResponse(userId,tweetId,tweet.getMessage(),tweet.getInsertTime());
+             responses.add(response);
+         }
+         return responses;
      }
 
-     public void deleteTweetById(String userId){
+     public void deleteTweetById(String userId,int tweetId){
          UserId userId1=new UserId(userId);
-         tweetRepository.deleteTweet(userId1);
+         TweetId tweetId1=new TweetId(tweetId);
+         tweetRepository.deleteTweet(userId1,tweetId1);
      }
 }
