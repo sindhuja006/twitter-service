@@ -10,4 +10,5 @@ public interface ITweetRepository {
     List<Tweet> postTweet(UserId userId, Tweet tweet);
     void deleteTweet(UserId userId,TweetId tweetId);
     List<Tweet> getTweets(UserId userId);
+    void verifyTweetExists(UserId userId,TweetId tweetId);
 }

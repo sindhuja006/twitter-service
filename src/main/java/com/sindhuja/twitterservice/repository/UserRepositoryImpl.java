@@ -30,8 +30,7 @@ public class UserRepositoryImpl implements IUserRepository{
 
     @Override
     public User getUserById(UserId userId) {
-        User user1=userMap.get(userId);
-        return user1;
+        return userMap.get(userId);
     }
 
     @Override
