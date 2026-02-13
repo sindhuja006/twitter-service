@@ -1,5 +1,6 @@
 package com.sindhuja.twitterservice.controller;
 
+import com.sindhuja.twitterservice.domain.Tweet;
 import com.sindhuja.twitterservice.domain.TweetIdNotExistsException;
 import com.sindhuja.twitterservice.domain.UserNotExistsException;
 import com.sindhuja.twitterservice.dto.CreateTweetRequest;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 
 @RestController
@@ -22,9 +24,11 @@ import java.util.List;
 public class TweetController {
      private static final Logger log = LoggerFactory.getLogger(TweetController.class);
      TweetService tweetService;
+
      public TweetController(TweetService tweetService){
          this.tweetService=tweetService;
      }
+
      @PostMapping("/{id}")
      public ResponseEntity<Object> postTweet(@RequestBody CreateTweetRequest request, @PathVariable String id){
          TweetResponse response;
@@ -37,7 +41,7 @@ public class TweetController {
          return ResponseEntity.status(HttpStatus.CREATED).body(response);
      }
 
-     @GetMapping("/{id}")
+     @GetMapping("/{id}/tweets")
      public ResponseEntity<List<?>> getTweets(@PathVariable String id){
          List<TweetResponse> responses;
          try{
@@ -61,5 +65,11 @@ public class TweetController {
              return new ResponseEntity<>(new ErrorResponse(ex.getMessage()),ex.getStatus());
          }
          return ResponseEntity.noContent().build();
+     }
+
+     @GetMapping("{userId}/allTweets")
+     public ResponseEntity<Set<TweetResponse>> getTimeLine(@PathVariable String userId){
+         Set<TweetResponse> response=tweetService.getTimeLine(userId);
+         return ResponseEntity.ok(response);
      }
 }

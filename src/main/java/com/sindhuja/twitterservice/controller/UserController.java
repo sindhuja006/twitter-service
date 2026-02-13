@@ -2,6 +2,7 @@ package com.sindhuja.twitterservice.controller;
 
 import com.sindhuja.twitterservice.domain.UserAlreadyExistsException;
 import com.sindhuja.twitterservice.domain.UserNotExistsException;
+import com.sindhuja.twitterservice.dto.CreateUpdateUserRequest;
 import com.sindhuja.twitterservice.dto.CreateUserRequest;
 import com.sindhuja.twitterservice.domain.UserId;
 import com.sindhuja.twitterservice.dto.UserResponse;
@@ -50,7 +51,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateUser(@RequestBody CreateUserRequest request,@PathVariable String id){
+    public ResponseEntity<Object> updateUser(@RequestBody CreateUpdateUserRequest request, @PathVariable String id){
         UserResponse response;
         try{
             response=userService.updateUser(request,id);

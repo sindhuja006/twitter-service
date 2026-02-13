@@ -1,5 +1,6 @@
 package com.sindhuja.twitterservice.service;
 
+import com.sindhuja.twitterservice.dto.CreateUpdateUserRequest;
 import com.sindhuja.twitterservice.dto.CreateUserRequest;
 import com.sindhuja.twitterservice.domain.User;
 import com.sindhuja.twitterservice.domain.UserId;
@@ -35,7 +36,7 @@ public class UserService {
         return new UserResponse(userId,user.getName(),user.getEmail());
     }
 
-    public UserResponse updateUser(CreateUserRequest request,String userId){
+    public UserResponse updateUser(CreateUpdateUserRequest request, String userId){
         UserId userId1=new UserId(userId);
         userRepository.verifyUserExists(userId1);
         User user1=userRepository.getUserById(userId1);

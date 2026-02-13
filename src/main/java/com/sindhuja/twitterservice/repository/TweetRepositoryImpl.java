@@ -8,10 +8,7 @@ import com.sindhuja.twitterservice.domain.UserId;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class TweetRepositoryImpl implements ITweetRepository{
@@ -37,6 +34,8 @@ public class TweetRepositoryImpl implements ITweetRepository{
         return tweetList;
     }
 
+
+
     @Override
     public void verifyTweetExists(UserId userId, TweetId tweetId) {
         List<Tweet> tweetList=tweetMap.get(userId);
@@ -50,4 +49,6 @@ public class TweetRepositoryImpl implements ITweetRepository{
             throw new TweetIdNotExistsException("TweetId" + tweetId +"not exists", HttpStatus.CONFLICT);
         }
     }
+
+
 }
