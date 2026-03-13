@@ -10,6 +10,7 @@ public interface IFollowRepository {
     void followUser(UserId followerId,UserId followeeId);
     void unFollowUser(UserId followerId,UserId followeeId);
     Set<UserId> getFollowers(UserId followeeId);
+    Set<UserId> getFollowing(UserId followerId);
 
 }
 

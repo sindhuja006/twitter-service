@@ -4,7 +4,6 @@ import java.util.Objects;
 
 public class UserId {
     String value;
-
     public String getUserValue(){
         return value;
     }
