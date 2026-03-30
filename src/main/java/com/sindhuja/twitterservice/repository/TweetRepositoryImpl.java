@@ -15,10 +15,16 @@ public class TweetRepositoryImpl implements ITweetRepository{
     Map<UserId, List<Tweet>> tweetMap=new HashMap<>();
 
     @Override
-    public List<Tweet> postTweet(UserId userId, Tweet tweet) {
+    public Tweet postTweet(UserId userId, Tweet tweet) {
         tweetMap.computeIfAbsent(userId,v->new LinkedList<>()).add(tweet);
         List<Tweet> tweetList=tweetMap.get(userId);
-        return tweetList;
+        Tweet resultTweet=null;
+        for(Tweet list:tweetList){
+            if(list.getTweetId().equals(tweet.getTweetId())){
+                resultTweet=new Tweet(list.getUserId(),list.getTweetId(), list.getMessage(), list.getInsertTime());
+            }
+        }
+        return resultTweet;
     }
 
     //To be Refractor

@@ -4,9 +4,7 @@ import com.sindhuja.twitterservice.domain.TweetId;
 import com.sindhuja.twitterservice.domain.UserId;
 import com.sindhuja.twitterservice.dto.CreateTweetRequest;
 import com.sindhuja.twitterservice.dto.TweetResponse;
-import com.sindhuja.twitterservice.repository.FollowRepositoryImpl;
-import com.sindhuja.twitterservice.repository.TweetRepositoryImpl;
-import com.sindhuja.twitterservice.repository.UserRepositoryImpl;
+import com.sindhuja.twitterservice.repository.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,10 +14,10 @@ import java.util.Set;
 
 @Service
 public class TweetService {
-     TweetRepositoryImpl tweetRepository;
-     UserRepositoryImpl userRepository;
-     FollowRepositoryImpl followRepository;
-     public TweetService(TweetRepositoryImpl tweetRepository, UserRepositoryImpl userRepository,FollowRepositoryImpl followRepository){
+     ITweetRepository tweetRepository;
+     IUserRepository userRepository;
+     IFollowRepository followRepository;
+     public TweetService(ITweetRepository tweetRepository, IUserRepository userRepository,IFollowRepository followRepository){
          this.tweetRepository=tweetRepository;
          this.userRepository=userRepository;
          this.followRepository=followRepository;
@@ -30,8 +28,8 @@ public class TweetService {
              userRepository.verifyUserExists(userId1);
              TweetId tweetId = new TweetId(request.tweetId());
              Tweet tweet = new Tweet(userId1, tweetId, request.message(), request.insertTime());
-             List<Tweet> tweetList=tweetRepository.postTweet(userId1, tweet);
-             return new TweetResponse(request.tweetId(), request.message(), request.insertTime());
+             Tweet resultTweet=tweetRepository.postTweet(userId1, tweet);
+             return new TweetResponse(resultTweet.getTweetId().getTweetValue(), resultTweet.getMessage(), resultTweet.getInsertTime());
      }
 
      public List<TweetResponse> getTweets(String userId){
