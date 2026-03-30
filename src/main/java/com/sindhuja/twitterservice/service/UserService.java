@@ -5,14 +5,15 @@ import com.sindhuja.twitterservice.dto.CreateUserRequest;
 import com.sindhuja.twitterservice.domain.User;
 import com.sindhuja.twitterservice.domain.UserId;
 import com.sindhuja.twitterservice.dto.UserResponse;
+import com.sindhuja.twitterservice.repository.IUserRepository;
 import com.sindhuja.twitterservice.repository.UserRepositoryImpl;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
 
-    UserRepositoryImpl userRepository;
-    public UserService(UserRepositoryImpl userRepository){
+    IUserRepository userRepository;
+    public UserService(IUserRepository userRepository){
         this.userRepository=userRepository;
 
     }

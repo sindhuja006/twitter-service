@@ -5,7 +5,9 @@ import com.sindhuja.twitterservice.domain.UserAlreadyExistsException;
 import com.sindhuja.twitterservice.domain.UserId;
 import com.sindhuja.twitterservice.domain.UserNotExistsException;
 import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -14,6 +16,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.function.DoubleToIntFunction;
 
+@Repository
+@Primary
 public class UserRepositoryDb implements IUserRepository {
 
     DataSource dataSource;
@@ -58,11 +62,21 @@ public class UserRepositoryDb implements IUserRepository {
     public User updateUser(User user, UserId userId) {
         try{
             Connection con= dataSource.getConnection();
+            User existingValue=getUserById(userId);
             //language=postgreSQL
-            String sql="UPDATE users SET name=?,email=? WHERE userId=?";
-            PreparedStatement ps= con.prepareStatement(sql);
-            ps.setString(2,user.getName());
-            ps.setString(3,user.getEmail());
+            String sql2="UPDATE users SET name=?,email=? WHERE userId=?";
+            if(user.getName()==null || user.getName().trim().isEmpty() || user.getName().equalsIgnoreCase("string")){
+                user.setName(existingValue.getName());
+            }
+            if(user.getEmail()==null || user.getEmail().trim().isEmpty() || user.getEmail().equalsIgnoreCase("string")){
+                user.setEmail(existingValue.getEmail());
+            }
+            PreparedStatement ps= con.prepareStatement(sql2);
+            ps.setString(1,user.getName());
+            ps.setString(2,user.getEmail());
+            ps.setString(3,userId.getUserValue());
+            int count=ps.executeUpdate();
+            System.out.println("Rows affected" + count);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -74,12 +88,12 @@ public class UserRepositoryDb implements IUserRepository {
         try{
             Connection con= dataSource.getConnection();
             //language=PostgreSQL
-            String sql="SELECT * from users WHERE id=?";
+            String sql="SELECT * from users WHERE userId=?";
             PreparedStatement ps=con.prepareStatement(sql);
             ps.setString(1,userId.getUserValue());
             ResultSet rs=ps.executeQuery();
             if(rs.next()){
-                return new User(new UserId(rs.getString("id")),
+                return new User(new UserId(rs.getString("userId")),
                         rs.getString("name"),
                         rs.getString("email")
                 );
@@ -97,7 +111,7 @@ public class UserRepositoryDb implements IUserRepository {
          try{
              Connection con= dataSource.getConnection();
              //language=postgreSQL
-             String sql="SELECT * from users WHERE userId=?";
+             String sql="SELECT userId from users WHERE userId=?";
              PreparedStatement ps=con.prepareStatement(sql);
              ps.setString(1, userId.getUserValue());
              ResultSet rs=ps.executeQuery();
@@ -119,12 +133,8 @@ public class UserRepositoryDb implements IUserRepository {
             PreparedStatement ps=con.prepareStatement(sql);
             ps.setString(1, userId.getUserValue());
             ResultSet rs=ps.executeQuery();
-            int count=0;
-            if(rs.next()){
-                count++;
-            }
-            if(count==0){
-                throw new UserNotExistsException("UserId" + userId +"already exists", HttpStatus.CONFLICT);
+            if(!rs.next()){
+                throw new UserNotExistsException("UserId" + userId +"not exists", HttpStatus.CONFLICT);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

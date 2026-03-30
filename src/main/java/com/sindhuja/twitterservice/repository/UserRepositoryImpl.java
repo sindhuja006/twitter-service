@@ -44,7 +44,7 @@ public class UserRepositoryImpl implements IUserRepository{
 
     public void verifyUserExists(UserId userId){
         if(!userMap.containsKey(userId)){
-           throw new UserNotExistsException("user" + userId +"not exists",HttpStatus.CONFLICT);
+           throw new UserNotExistsException("user in hashmap" + userId +"not exists",HttpStatus.CONFLICT);
         }
     }
 }
