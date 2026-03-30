@@ -3,6 +3,8 @@ package com.sindhuja.twitterservice.service;
 import com.sindhuja.twitterservice.domain.UserId;
 import com.sindhuja.twitterservice.dto.FollowResponse;
 import com.sindhuja.twitterservice.repository.FollowRepositoryImpl;
+import com.sindhuja.twitterservice.repository.IFollowRepository;
+import com.sindhuja.twitterservice.repository.IUserRepository;
 import com.sindhuja.twitterservice.repository.UserRepositoryImpl;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +13,9 @@ import java.util.Set;
 
 @Service
 public class FollowService {
-    FollowRepositoryImpl followRepository;
-    UserRepositoryImpl userRepository;
-    public FollowService(FollowRepositoryImpl followRepository, UserRepositoryImpl userRepository){
+    IFollowRepository followRepository;
+    IUserRepository userRepository;
+    public FollowService(IFollowRepository followRepository, IUserRepository userRepository){
         this.followRepository=followRepository;
         this.userRepository=userRepository;
     }
