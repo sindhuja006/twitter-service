@@ -9,4 +9,9 @@ CREATE TABLE IF NOT EXISTS tweets(
     tweetId Integer not null,
     message varchar(280),
     insertTime TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
-)
+);
+
+CREATE TABLE IF NOT EXISTS follow(
+    followerId varchar References users(userId),
+    followeeId varchar References users(userId)
+);
