@@ -23,7 +23,6 @@ public class UserId {
 
     @Override
     public boolean equals(Object o) {
-        UserId xx = (UserId) o;//
         if (!(o instanceof UserId userId1)) return false;
         return Objects.equals(value, userId1.value);
     }

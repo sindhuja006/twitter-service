@@ -39,7 +39,8 @@ public class FollowRepositoryDb implements IFollowRepository{
     public void unFollowUser(UserId followerId, UserId followeeId) {
           try{
               Connection con= dataSource.getConnection();
-              String sql="DELETE FROM follow WHERE followerId=? AND followeeId=?";
+              String sql="DELETE FROM " +
+                      "follow WHERE followerId=? AND followeeId=?";
               PreparedStatement ps=con.prepareStatement(sql);
               ps.setString(1, followerId.getUserValue());
               ps.setString(2,followeeId.getUserValue());

@@ -1,5 +1,7 @@
 package com.sindhuja.twitterservice.domain;
 
+import java.util.Objects;
+
 public class User {
     private UserId userId;
     private String name;
@@ -33,5 +35,16 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(userId, user.userId) && Objects.equals(name, user.name) && Objects.equals(email, user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId, name, email);
     }
 }
