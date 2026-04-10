@@ -28,6 +28,7 @@ public class UserServiceTest {
         userService = new UserService(userRepository);
     }
 
+
     @Test
     public void addUserTest() {
         CreateUserRequest request = new CreateUserRequest("1", "sindhu", "sindhuja@gmail.com");
