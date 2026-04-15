@@ -28,11 +28,9 @@ public class UserRepositoryDb implements IUserRepository {
 
     @Override
     public User addUser(User user) {
-        try {
-            Connection connection = dataSource.getConnection();
-            //language=PostgreSQL
-            String sql="INSERT into users(userId,name,email) VALUES (?,?,?)";
-            PreparedStatement ps= connection.prepareStatement(sql);
+        String sql="INSERT into users(userId,name,email) VALUES (?,?,?)";
+        try (Connection connection = dataSource.getConnection();
+            PreparedStatement ps= connection.prepareStatement(sql)){
             ps.setString(1,user.getUserId().getUserValue());
             ps.setString(2,user.getName());
             ps.setString(3,user.getEmail());
@@ -45,11 +43,9 @@ public class UserRepositoryDb implements IUserRepository {
 
     @Override
     public void deleteUser(UserId userId) {
-        try {
-            Connection con = dataSource.getConnection();
-            //language=postgreSQL
-            String sql="DELETE from users where userId=?";
-            PreparedStatement ps= con.prepareStatement(sql);
+        String sql="DELETE from users where userId=?";
+        try (Connection con = dataSource.getConnection();
+            PreparedStatement ps= con.prepareStatement(sql)){
             ps.setString(1,userId.getUserValue());
             ps.executeUpdate();
         }catch (SQLException e) {
@@ -60,18 +56,19 @@ public class UserRepositoryDb implements IUserRepository {
 
     @Override
     public User updateUser(User user, UserId userId) {
-        try{
-            Connection con= dataSource.getConnection();
+        String sql2="UPDATE users SET name=?,email=? WHERE userId=?";
+        try (Connection con= dataSource.getConnection();
+            PreparedStatement ps= con.prepareStatement(sql2)){
             User existingValue=getUserById(userId);
             //language=postgreSQL
-            String sql2="UPDATE users SET name=?,email=? WHERE userId=?";
+
             if(user.getName()==null || user.getName().trim().isEmpty() || user.getName().equalsIgnoreCase("string")){
                 user.setName(existingValue.getName());
             }
             if(user.getEmail()==null || user.getEmail().trim().isEmpty() || user.getEmail().equalsIgnoreCase("string")){
                 user.setEmail(existingValue.getEmail());
             }
-            PreparedStatement ps= con.prepareStatement(sql2);
+
             ps.setString(1,user.getName());
             ps.setString(2,user.getEmail());
             ps.setString(3,userId.getUserValue());
@@ -85,11 +82,9 @@ public class UserRepositoryDb implements IUserRepository {
 
     @Override
     public User getUserById(UserId userId) {
-        try{
-            Connection con= dataSource.getConnection();
-            //language=PostgreSQL
-            String sql="SELECT * from users WHERE userId=?";
-            PreparedStatement ps=con.prepareStatement(sql);
+        String sql="SELECT * from users WHERE userId=?";
+        try (Connection con= dataSource.getConnection();
+            PreparedStatement ps=con.prepareStatement(sql)){
             ps.setString(1,userId.getUserValue());
             ResultSet rs=ps.executeQuery();
             if(rs.next()){
@@ -108,11 +103,9 @@ public class UserRepositoryDb implements IUserRepository {
 
     @Override
     public void verifyUserNotExists(UserId userId) {
-         try{
-             Connection con= dataSource.getConnection();
-             //language=postgreSQL
-             String sql="SELECT userId from users WHERE userId=?";
-             PreparedStatement ps=con.prepareStatement(sql);
+        String sql="SELECT userId from users WHERE userId=?";
+         try(Connection con= dataSource.getConnection();
+             PreparedStatement ps=con.prepareStatement(sql)){
              ps.setString(1, userId.getUserValue());
              ResultSet rs=ps.executeQuery();
              if(rs.next()){
@@ -126,11 +119,9 @@ public class UserRepositoryDb implements IUserRepository {
     @Override
 
     public void verifyUserExists(UserId userId) {
-        try{
-            Connection con=dataSource.getConnection();
-            //language=postgreSQL
-            String sql="SELECT * from users WHERE userId=?";
-            PreparedStatement ps=con.prepareStatement(sql);
+        String sql="SELECT * from users WHERE userId=?";
+        try(Connection con=dataSource.getConnection();
+            PreparedStatement ps=con.prepareStatement(sql)){
             ps.setString(1, userId.getUserValue());
             ResultSet rs=ps.executeQuery();
             if(!rs.next()){

@@ -47,7 +47,7 @@ public class UserController {
             log.error("e:",e);
             return new ResponseEntity<>(new ErrorResponse(e.getMessage()),e.getStatus());
         }
-        return ResponseEntity.ok( response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{id}")
@@ -59,7 +59,7 @@ public class UserController {
             log.error("e: " +e);
             return new ResponseEntity<>(new ErrorResponse(e.getMessage()),e.getStatus());
         }
-        return ResponseEntity.ok("User updated" + response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @DeleteMapping("/{id}")
