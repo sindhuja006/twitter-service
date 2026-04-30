@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS tweets(
     userId varchar References users(userId),
     tweetId Integer not null,
     message varchar(280),
-    insertTime TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+    insertTime TIMESTAMP WITH TIME ZONE  DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS follow(

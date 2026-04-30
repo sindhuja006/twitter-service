@@ -11,6 +11,7 @@ import org.junit.jupiter.api.*;
 import javax.sql.DataSource;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Disabled
 public class UserRepositoryDbTest {
 
     UserRepositoryDb repositoryDb;

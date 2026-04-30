@@ -7,6 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class TwitterServiceApplication {
 
     public static void main(String[] args) {
+        for(String x: args) {
+            System.out.println(x);
+        }
         SpringApplication.run(TwitterServiceApplication.class, args);
     }
 
