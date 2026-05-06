@@ -56,10 +56,10 @@ public class UserController {
         try{
             response=userService.updateUser(request,id);
         }catch(UserNotExistsException e){
-            log.error("e: " +e);
+            log.error("e: {}", String.valueOf(e));
             return new ResponseEntity<>(new ErrorResponse(e.getMessage()),e.getStatus());
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping("/{id}")

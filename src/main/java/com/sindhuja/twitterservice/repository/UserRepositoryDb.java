@@ -61,14 +61,10 @@ public class UserRepositoryDb implements IUserRepository {
             PreparedStatement ps= con.prepareStatement(sql2)){
             User existingValue=getUserById(userId);
             //language=postgreSQL
-
-            if(user.getName()==null || user.getName().trim().isEmpty() || user.getName().equalsIgnoreCase("string")){
-                user.setName(existingValue.getName());
-            }
-            if(user.getEmail()==null || user.getEmail().trim().isEmpty() || user.getEmail().equalsIgnoreCase("string")){
-                user.setEmail(existingValue.getEmail());
-            }
-
+            User.builder().userId(existingValue.getUserId())
+                         .name(existingValue.getName())
+                         .email(existingValue.getEmail())
+                         .build();
             ps.setString(1,user.getName());
             ps.setString(2,user.getEmail());
             ps.setString(3,userId.getUserValue());
@@ -88,10 +84,10 @@ public class UserRepositoryDb implements IUserRepository {
             ps.setString(1,userId.getUserValue());
             ResultSet rs=ps.executeQuery();
             if(rs.next()){
-                return new User(new UserId(rs.getString("userId")),
-                        rs.getString("name"),
-                        rs.getString("email")
-                );
+                return  User.builder().userId(new UserId(rs.getString("userId")))
+                        .name("name")
+                        .email("email")
+                        .build();
             }
 
         } catch (SQLException e) {
@@ -119,7 +115,7 @@ public class UserRepositoryDb implements IUserRepository {
     @Override
 
     public void verifyUserExists(UserId userId) {
-        String sql="SELECT * from users WHERE userId=?";
+        String sql="SELECT 1 from users WHERE userId=?";
         try(Connection con=dataSource.getConnection();
             PreparedStatement ps=con.prepareStatement(sql)){
             ps.setString(1, userId.getUserValue());

@@ -21,10 +21,11 @@ public class UserService {
     public UserResponse addUser(CreateUserRequest request){
         UserId userId=new UserId(request.userId());
         userRepository.verifyUserNotExists(userId);
-        User user=new User(userId,
-                request.name(),
-                request.email());
-        User savedUser=userRepository.addUser(user);
+        User user=User.builder().userId(userId)
+                .name(request.name())
+                .email(request.email())
+                .build();
+       User savedUser=userRepository.addUser(user);
         return new UserResponse(savedUser.getUserId().getUserValue(),
                 savedUser.getName(),
                 savedUser.getEmail());
@@ -40,9 +41,10 @@ public class UserService {
     public UserResponse updateUser(CreateUpdateUserRequest request, String userId){
         UserId userId1=new UserId(userId);
         userRepository.verifyUserExists(userId1);
-        User user1=userRepository.getUserById(userId1);
-        user1.setName(request.name());
-        user1.setEmail(request.email());
+        User user1=User.builder().userId(userId1)
+                .name(request.name())
+                .email(request.email())
+                .build();
         User updatedUser=userRepository.updateUser(user1,userId1);
         return new UserResponse(
                 updatedUser.getUserId().getUserValue(),
