@@ -7,6 +7,8 @@ import com.sindhuja.twitterservice.domain.UserNotExistsException;
 import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -20,111 +22,73 @@ import java.util.function.DoubleToIntFunction;
 @Primary
 public class UserRepositoryDb implements IUserRepository {
 
-    DataSource dataSource;
+    JdbcTemplate jdbcTemplate;
 
-    public UserRepositoryDb(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public UserRepositoryDb(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
     public User addUser(User user) {
-        String sql="INSERT into users(userId,name,email) VALUES (?,?,?)";
-        try (Connection connection = dataSource.getConnection();
-            PreparedStatement ps= connection.prepareStatement(sql)){
-            ps.setString(1,user.getUserId().getUserValue());
-            ps.setString(2,user.getName());
-            ps.setString(3,user.getEmail());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        String sql = "INSERT into users(userId,name,email) VALUES (?,?,?)";
+        jdbcTemplate.update(sql,
+                user.getUserId().getUserValue(),
+                user.getName(),
+                user.getEmail());
         return user;
     }
 
     @Override
     public void deleteUser(UserId userId) {
-        String sql="DELETE from users where userId=?";
-        try (Connection con = dataSource.getConnection();
-            PreparedStatement ps= con.prepareStatement(sql)){
-            ps.setString(1,userId.getUserValue());
-            ps.executeUpdate();
-        }catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
+        String sql = "DELETE from users where userId=?";
+        jdbcTemplate.update(sql,userId.getUserValue());
     }
 
     @Override
     public User updateUser(User user, UserId userId) {
-        String sql2="UPDATE users SET name=?,email=? WHERE userId=?";
-        try (Connection con= dataSource.getConnection();
-            PreparedStatement ps= con.prepareStatement(sql2)){
-            User existingValue=getUserById(userId);
-            //language=postgreSQL
-            User.builder().userId(existingValue.getUserId())
-                         .name(existingValue.getName())
-                         .email(existingValue.getEmail())
-                         .build();
-            ps.setString(1,user.getName());
-            ps.setString(2,user.getEmail());
-            ps.setString(3,userId.getUserValue());
-            int count=ps.executeUpdate();
-            System.out.println("Rows affected" + count);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        String sql2 = "UPDATE users SET name=?,email=? WHERE userId=?";
+        jdbcTemplate.update(sql2,
+                user.getName(),
+                user.getEmail(),
+                userId.getUserValue());
         return user;
     }
 
+//   RowMapper<User>  userRowMapper = (rs, rowcount) ->
+//           User.builder().userId(new UserId(rs.getString("userId")))
+//                   .name(rs.getString("name"))
+//                   .email(rs.getString("email"))
+//                   .build(),
+//                userId.getValue());
+
     @Override
     public User getUserById(UserId userId) {
-        String sql="SELECT * from users WHERE userId=?";
-        try (Connection con= dataSource.getConnection();
-            PreparedStatement ps=con.prepareStatement(sql)){
-            ps.setString(1,userId.getUserValue());
-            ResultSet rs=ps.executeQuery();
-            if(rs.next()){
-                return  User.builder().userId(new UserId(rs.getString("userId")))
-                        .name("name")
-                        .email("email")
-                        .build();
-            }
+        String sql = "SELECT * from users WHERE userId=?";
+        return jdbcTemplate.queryForObject(sql, (rs, rowcount) ->
+                User.builder().userId(new UserId(rs.getString("userId")))
+                        .name(rs.getString("name"))
+                        .email(rs.getString("email"))
+                        .build(),
+                userId.getValue());
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return null;
     }
 
     @Override
     public void verifyUserNotExists(UserId userId) {
-        String sql="SELECT userId from users WHERE userId=?";
-         try(Connection con= dataSource.getConnection();
-             PreparedStatement ps=con.prepareStatement(sql)){
-             ps.setString(1, userId.getUserValue());
-             ResultSet rs=ps.executeQuery();
-             if(rs.next()){
-                 throw new UserAlreadyExistsException("UserId" + userId + "already exists",HttpStatus.CONFLICT);
-             }
-         } catch (SQLException e) {
-             throw new RuntimeException(e);
-         }
+        String sql = "SELECT count(*) from users WHERE userId=?";
+        Integer user = jdbcTemplate.queryForObject(sql,Integer.class,userId.getUserValue());
+        if (user>0) {
+            throw new UserAlreadyExistsException("UserId" + userId + "already exists", HttpStatus.CONFLICT);
+        }
     }
 
     @Override
 
     public void verifyUserExists(UserId userId) {
-        String sql="SELECT 1 from users WHERE userId=?";
-        try(Connection con=dataSource.getConnection();
-            PreparedStatement ps=con.prepareStatement(sql)){
-            ps.setString(1, userId.getUserValue());
-            ResultSet rs=ps.executeQuery();
-            if(!rs.next()){
-                throw new UserNotExistsException("UserId" + userId +"not exists", HttpStatus.CONFLICT);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        String sql = "SELECT count(*) from users WHERE userId=?";
+        Integer user = jdbcTemplate.queryForObject(sql,Integer.class, userId.getUserValue());
+        if (user == null || user==0) {
+            throw new UserNotExistsException("UserId" + userId + "NOT exists", HttpStatus.CONFLICT);
         }
     }
 }
