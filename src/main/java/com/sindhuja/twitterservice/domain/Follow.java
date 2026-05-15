@@ -1,21 +1,12 @@
 package com.sindhuja.twitterservice.domain;
 
+import lombok.Builder;
+import lombok.Getter;
+
+@Builder
+@Getter
 public class Follow {
-    UserId followId;
-    UserId followeeId;
-    public UserId getFollowId() {
-        return followId;
-    }
+    private UserId followId;
+    private UserId followeeId;
 
-    public void setFollowId(UserId followId) {
-        this.followId = followId;
-    }
-
-    public UserId getFolloweeId() {
-        return followeeId;
-    }
-
-    public void setFolloweeId(UserId followeeId) {
-        this.followeeId = followeeId;
-    }
 }
