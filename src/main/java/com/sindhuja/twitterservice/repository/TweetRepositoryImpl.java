@@ -21,7 +21,10 @@ public class TweetRepositoryImpl implements ITweetRepository{
         Tweet resultTweet=null;
         for(Tweet list:tweetList){
             if(list.getTweetId().equals(tweet.getTweetId())){
-                resultTweet=new Tweet(list.getUserId(),list.getTweetId(), list.getMessage(), list.getInsertTime());
+                resultTweet=Tweet.builder().tweetId(list.getTweetId())
+                        .userId(list.getUserId())
+                        .message(list.getMessage())
+                        .insertTime(list.getInsertTime()).build();
             }
         }
         return resultTweet;

@@ -27,7 +27,11 @@ public class TweetService {
              UserId userId1 = new UserId(userId);
              userRepository.verifyUserExists(userId1);
              TweetId tweetId = new TweetId(request.tweetId());
-             Tweet tweet = new Tweet(userId1, tweetId, request.message(), request.insertTime());
+             Tweet tweet = Tweet.builder().userId(userId1)
+                     .tweetId(tweetId)
+                     .message(request.message())
+                     .insertTime(request.insertTime())
+                     .build();
              Tweet resultTweet=tweetRepository.postTweet(userId1, tweet);
              return new TweetResponse(resultTweet.getTweetId().getTweetValue(), resultTweet.getMessage(), resultTweet.getInsertTime());
      }
